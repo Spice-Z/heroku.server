@@ -94,7 +94,7 @@ apiRoutes.post('/authenticate', function(req, res) {
     .catch(error => {
       res.json({
         success: false,
-        message: 'something happen. cannot access DB.'
+        message: 'Error! Something happen. cannot access DB.'
       });
     });
 });
