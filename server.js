@@ -8,6 +8,7 @@ const morgan          = require('morgan');
 const db = require("./pg-setting.js");
 const jwt                   = require('jsonwebtoken');
 const config              = require('./config');
+const cors = require("cors");
 
 // =======================
 // configuration
@@ -21,15 +22,17 @@ app.set('superSecret', config.secret);
 // config for body-parser
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Allow","GET,HEAD,POST");
-  next();
-});
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.header("Allow","GET,HEAD,POST");
+//   next();
+// });
+app.use(cors());
+
 
 // log request
 app.use(morgan('dev'));
