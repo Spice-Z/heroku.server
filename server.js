@@ -141,7 +141,7 @@ apiRoutes.get('/users', function(req, res) {
 // GET(http://localhost:8080/api/general)
 apiRoutes.get('/general',function(req,res){
   const userID = req.body.userId
-  res.json(req.body);
+  res.json(userID);
   // db
   //   .any(
   //     `select id,idea_text,date, mention_from_id.mentiond_id as is_mention_to, mentiond_id.mention_from_id as is_mentiond from ideas 
