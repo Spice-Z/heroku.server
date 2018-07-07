@@ -140,14 +140,14 @@ apiRoutes.get('/users', function(req, res) {
 
 // GET(http://localhost:8080/api/general)
 apiRoutes.get('/general',function(req,res){
-  const usrID = req.body.userId
-  res.json({'status':true});
+  const userID = req.body.userId
+  res.json(req.body);
   // db
   //   .any(
   //     `select id,idea_text,date, mention_from_id.mentiond_id as is_mention_to, mentiond_id.mention_from_id as is_mentiond from ideas 
   //     LEFT JOIN ( select mention_from_id , mentiond_id from idea_relations ) as mention_from_id ON id = mention_from_id.mention_from_id 
   //     LEFT JOIN ( select mentiond_id , mention_from_id from idea_relations ) as mentiond_id ON id = mentiond_id.mentiond_id 
-  //     WHERE userId = $1`, usrID
+  //     WHERE userId = $1`, userID
   //   )
   //   .then(function(data) {
   //     res.json(data);
