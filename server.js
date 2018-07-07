@@ -22,15 +22,6 @@ app.set('superSecret', config.secret);
 // config for body-parser
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.header("Allow","GET,HEAD,POST");
-//   next();
-// });
 app.use(cors());
 
 
@@ -144,6 +135,24 @@ apiRoutes.get('/users', function(req, res) {
     })
     .catch(function(error) {
       throw error;
+    });
+});
+
+// GET(http://localhost:8080/api/general)
+apiRoutes.get('/general',function(req,res){
+  const usrID = req.body.userId
+  db
+    .any(
+      `select id,idea_text,date, mention_from_id.mentiond_id as is_mention_to, mentiond_id.mention_from_id as is_mentiond from ideas 
+      LEFT JOIN ( select mention_from_id , mentiond_id from idea_relations ) as mention_from_id ON id = mention_from_id.mention_from_id 
+      LEFT JOIN ( select mentiond_id , mention_from_id from idea_relations ) as mentiond_id ON id = mentiond_id.mentiond_id 
+      WHERE userId = $1`, usrID
+    )
+    .then(function(data) {
+      res.json(data);
+    })
+    .catch(function(error) {
+      console.log(error);
     });
 });
 
