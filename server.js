@@ -141,19 +141,20 @@ apiRoutes.get('/users', function(req, res) {
 // GET(http://localhost:8080/api/general)
 apiRoutes.get('/general',function(req,res){
   const usrID = req.body.userId
-  db
-    .any(
-      `select id,idea_text,date, mention_from_id.mentiond_id as is_mention_to, mentiond_id.mention_from_id as is_mentiond from ideas 
-      LEFT JOIN ( select mention_from_id , mentiond_id from idea_relations ) as mention_from_id ON id = mention_from_id.mention_from_id 
-      LEFT JOIN ( select mentiond_id , mention_from_id from idea_relations ) as mentiond_id ON id = mentiond_id.mentiond_id 
-      WHERE userId = $1`, usrID
-    )
-    .then(function(data) {
-      res.json(data);
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
+  res.json({'status':true});
+  // db
+  //   .any(
+  //     `select id,idea_text,date, mention_from_id.mentiond_id as is_mention_to, mentiond_id.mention_from_id as is_mentiond from ideas 
+  //     LEFT JOIN ( select mention_from_id , mentiond_id from idea_relations ) as mention_from_id ON id = mention_from_id.mention_from_id 
+  //     LEFT JOIN ( select mentiond_id , mention_from_id from idea_relations ) as mentiond_id ON id = mentiond_id.mentiond_id 
+  //     WHERE userId = $1`, usrID
+  //   )
+  //   .then(function(data) {
+  //     res.json(data);
+  //   })
+  //   .catch(function(error) {
+  //     console.log(error);
+  //   });
 });
 
 
