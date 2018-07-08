@@ -169,9 +169,7 @@ app.post("/api/tweetNewIdea", function(req, res) {
   console.log(userId);
   
   db
-    .one("INSERT INTO ideas(idea_text, user_id, date ) VALUES(${text}, ${userId}, now() ) RETURNING id", {
-      test: ideaText, userId: userId
-    })
+    .one("INSERT INTO ideas(idea_text, user_id, date ) VALUES($1, $2, now() ) RETURNING id", [ ideaText, userId ])
     .then(data => {
       newId = data.id;
     })
