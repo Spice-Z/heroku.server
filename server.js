@@ -81,7 +81,6 @@ apiRoutes.post('/authenticate', function(req, res) {
       });
       console.log('id');
       console.log(user.id);
-      
 
       res.json({
         success: true,
@@ -145,14 +144,14 @@ apiRoutes.get('/users', function(req, res) {
 
 // GET(http://localhost:8080/api/general)
 apiRoutes.get('/general/:userId',function(req,res){
-  const userID = req.params.userId
-  console.log(userID);
+  const userId = req.params.userId
+  console.log(userId);
   db
     .any(
       `select id,idea_text,date, mention_from_id.mentiond_id as is_mention_to, mentiond_id.mention_from_id as is_mentiond from ideas 
       LEFT JOIN ( select mention_from_id , mentiond_id from idea_relations ) as mention_from_id ON id = mention_from_id.mention_from_id 
       LEFT JOIN ( select mentiond_id , mention_from_id from idea_relations ) as mentiond_id ON id = mentiond_id.mentiond_id 
-      WHERE userId = $1`, userID
+      WHERE user_id = $1`, userId
     )
     .then(function(data) {
       res.json(data);
@@ -160,6 +159,44 @@ apiRoutes.get('/general/:userId',function(req,res){
     .catch(function(error) {
       console.log(error);
     });
+});
+
+app.post("/api/tweetNewIdea", function(req, res) {
+  let newId = "";
+  const mentionToId = req.body.mentionTo;
+  const ideaText = req.body.ideaText
+  const userId = req.body.userId
+  console.log(userId);
+  
+  db
+    .one("INSERT INTO ideas(idea_text, user_id, date ) VALUES(${text}, ${userId}, now() ) RETURNING id", {
+      test: ideaText, userId: userId
+    })
+    .then(data => {
+      newId = data.id;
+    })
+    .catch(error => {
+      console.log("ERROR:", error);
+    });
+
+  if (!mentionToId || mentionToId == 0) {
+    res.json(req.body);
+    return;
+  }
+  setTimeout(() => {
+    db
+      .none(
+        "INSERT INTO idea_relations(mention_from_id, mentiond_id) VALUES($1, $2 )",
+        [newId, mentionToId]
+      )
+      .then(() => {
+        console.log("insert is success");
+        res.json(req.body);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
+  }, 3000);
 });
 
 
