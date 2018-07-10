@@ -168,7 +168,7 @@ apiRoutes.post("/tweetNewIdea", function(req, res) {
     });
 
   if (!mentionToId || mentionToId == 0) {
-    res.json(req.body);
+    res.json({ 'ideaId': newId });
     return;
   }
   setTimeout(() => {
@@ -179,7 +179,7 @@ apiRoutes.post("/tweetNewIdea", function(req, res) {
       )
       .then(() => {
         console.log("insert is success");
-        res.json(req.body);
+        res.json({ 'ideaId': newId });
       })
       .catch(error => {
         console.log("ERROR:", error);
