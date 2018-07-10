@@ -100,7 +100,6 @@ apiRoutes.post('/authenticate', function(req, res) {
 
 // Authentification Filter
 apiRoutes.use(function(req, res, next) {
-
   // get token from body:token or query:token of Http Header:x-access-token
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -132,15 +131,6 @@ apiRoutes.use(function(req, res, next) {
 //----------------------secure api -------------------------
 
 // GET(http://localhost:8080/api/users)
-apiRoutes.get('/users', function(req, res) {
-  db.any('SELECT * FROM users')
-    .then(function(data) {
-      res.json(data);
-    })
-    .catch(function(error) {
-      throw error;
-    });
-});
 
 // GET(http://localhost:8080/api/general)
 apiRoutes.get('/general/:userId',function(req,res){
@@ -161,7 +151,7 @@ apiRoutes.get('/general/:userId',function(req,res){
     });
 });
 
-app.post("/api/tweetNewIdea", function(req, res) {
+apiRoutes.post("/tweetNewIdea", function(req, res) {
   let newId = "";
   const mentionToId = req.body.mentionTo;
   const ideaText = req.body.ideaText
@@ -195,6 +185,19 @@ app.post("/api/tweetNewIdea", function(req, res) {
         console.log("ERROR:", error);
       });
   }, 3000);
+});
+
+apiRoutes.post("/deleteIdea", function(req, res) {
+  const id = req.body.id;
+  db
+    .result("DELETE FROM ideas WHERE id = $1", id)
+    .then(result => {
+      console.log(result.rowCount);
+      res.json(result.rowCount + "件削除しました");
+    })
+    .catch(error => {
+      console.log("ERROR:", error);
+    });
 });
 
 
