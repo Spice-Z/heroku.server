@@ -168,6 +168,8 @@ apiRoutes.post("/tweetNewIdea", function(req, res) {
     });
 
   if (!mentionToId || mentionToId == 0) {
+    console.log(newId);
+    
     res.json(newId);
     return;
   }
