@@ -170,8 +170,7 @@ apiRoutes.post("/tweetNewIdea", function(req, res) {
   if (!mentionToId || mentionToId == 0) {
     console.log(newId);
     
-    res.json(newId);
-    return;
+    return res.json(newId);
   }
   setTimeout(() => {
     db
@@ -195,7 +194,7 @@ apiRoutes.post("/deleteIdea", function(req, res) {
     .result("DELETE FROM ideas WHERE id = $1", id)
     .then(result => {
       console.log(result.rowCount);
-      res.json(result.rowCount + "件削除しました");
+      return res.json(result.rowCount + "件削除しました");
     })
     .catch(error => {
       console.log("ERROR:", error);
