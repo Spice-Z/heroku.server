@@ -151,40 +151,31 @@ apiRoutes.get('/general/:userId',function(req,res){
     });
 });
 
-apiRoutes.post("/tweetNewIdea", function(req, res) {
+apiRoutes.post("/tweetNewIdea", async(req, res) => {
   let newId = "";
   const mentionToId = req.body.mentionTo;
   const ideaText = req.body.ideaText
   const userId = req.body.userId
-  console.log(userId);
-  
-  db
-    .one("INSERT INTO ideas(idea_text, user_id, date ) VALUES($1, $2, now() ) RETURNING id", [ ideaText, userId ])
-    .then(data => {
-      newId = data.id;
-    })
-    .catch(error => {
-      console.log("ERROR:", error);
-    });
-
-  if (!mentionToId || mentionToId == 0) {
-    console.log(newId);
-    res.json({ newId: newId});
+  //新規ideaの追加
+  try {
+    let addResult = await db.one("INSERT INTO ideas(idea_text, user_id, date ) VALUES($1, $2, now() ) RETURNING id", [ ideaText, userId ])
+    newId = addResult.id;
+  } catch (e) {
+    // throw error;
+    console.log('error');
+    console.log(e);
   }
-  setTimeout(() => {
-    db
-      .none(
-        "INSERT INTO idea_relations(mention_from_id, mentiond_id) VALUES($1, $2 )",
-        [newId, mentionToId]
-      )
-      .then(() => {
-        console.log("insert is success");
-        res.json({ newId: newId});
-      })
-      .catch(error => {
-        console.log("ERROR:", error);
-      });
-  }, 3000);
+  //mentionがない場合はここで終了
+  if (!mentionToId || mentionToId === 0) {
+    return res.json({ newId: newId});
+  }
+  //mentionを登録
+  try {
+    const mentionResult = await db.none("INSERT INTO idea_relations(mention_from_id, mentiond_id) VALUES($1, $2 )", [newId, mentionToId])
+    return res.json({ newId: newId});
+  } catch (e) {
+    // throw error
+  }
 });
 
 apiRoutes.post("/deleteIdea", function(req, res) {
